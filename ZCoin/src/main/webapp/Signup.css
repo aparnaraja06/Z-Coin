@@ -1,0 +1,74 @@
+@charset "UTF-8";
+
+body,html
+{
+	background-image:url("");
+	background-repeat: no-repeat;
+	height:100%;
+	background-size: cover;
+	 
+}
+.container{
+  padding: 16px;
+  border-radius: 20px ;  
+  border:2px solid blur;
+  box-shadow: 5px 10px #888888;
+  width:30%;
+  background-color:rgba(240, 240, 240,0.5); 
+  position: absolute;
+    top:150px;;
+    bottom: 100px;
+    left: 550px;
+    right: 0;
+  
+  }
+  
+ #msg,#result,#resultt
+ {
+ text-align :center;
+ color:Red;
+	font-size: 20px;
+ }
+  input[type=text],input[type=password]{
+  width: 70%;
+  padding: 12px 20px;
+  margin: 10px 0;
+  display: inline-block;
+  border: 1px solid ;
+  box-sizing: border-box;
+  margin-left:50px;
+  
+}
+#btn
+{
+
+    top:50%;
+    background-color:#0a0a23;
+    color: #fff;
+    border:none;
+     height: 40px; 
+      border-radius: 20px; 
+    
+}
+h2
+{
+	text-align:center;
+}
+
+label
+{
+	font-weight: bold;
+	 margin-left:30px;
+}
+
+#loginbtn{
+	 width: 50%;  
+    height: 50px;  
+    border: none;  
+    border-radius: 10px;  
+    padding-left: 7px;  
+    color: black;  
+	background-color:MediumSeaGreen;
+	margin-left:120px;
+	cursor:pointer;
+} 

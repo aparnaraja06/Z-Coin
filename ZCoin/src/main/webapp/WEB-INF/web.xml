@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>ZCoin</display-name>
+  <welcome-file-list>
+    <welcome-file>SelectDb.jsp</welcome-file>
+  </welcome-file-list>
+ <servlet>
+<servlet-name>Login</servlet-name>
+<servlet-class>servlet.LoginServlet</servlet-class>
+</servlet>
+<servlet>
+<servlet-name>Select</servlet-name>
+<servlet-class>servlet.SelectDb</servlet-class>
+</servlet>
+<servlet>
+<servlet-name>Password</servlet-name>
+<servlet-class>servlet.PasswordServlet</servlet-class>
+</servlet>
+<servlet>
+<servlet-name>SignUp</servlet-name>
+<servlet-class>servlet.SignupServlet</servlet-class>
+</servlet>
+<servlet>
+<servlet-name>Manage</servlet-name>
+<servlet-class>servlet.ManageServlet</servlet-class>
+</servlet>
+<servlet>
+<servlet-name>Add</servlet-name>
+<servlet-class>servlet.AddServlet</servlet-class>
+</servlet>
+<servlet>
+<servlet-name>Change</servlet-name>
+<servlet-class>servlet.ChangePassword</servlet-class>
+</servlet>
+<servlet>
+<servlet-name>Logout</servlet-name>
+<servlet-class>servlet.LogoutServlet</servlet-class>
+</servlet>
+<servlet>
+<servlet-name>Transaction</servlet-name>
+<servlet-class>servlet.TransactionServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>Login</servlet-name>
+<url-pattern>/login</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+<servlet-name>Select</servlet-name>
+<url-pattern>/select</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+<servlet-name>Manage</servlet-name>
+<url-pattern>/manage</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+<servlet-name>Password</servlet-name>
+<url-pattern>/password</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+<servlet-name>SignUp</servlet-name>
+<url-pattern>/signUp</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+<servlet-name>Add</servlet-name>
+<url-pattern>/add</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+<servlet-name>Transaction</servlet-name>
+<url-pattern>/transaction</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+<servlet-name>Change</servlet-name>
+<url-pattern>/change</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+<servlet-name>Logout</servlet-name>
+<url-pattern>/logout</url-pattern>
+</servlet-mapping>
+</web-app>
