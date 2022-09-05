@@ -25,17 +25,19 @@ public class CoinOperation
 		coin.createDatabase();
 	}
 	
-	public void createDatabasePsql()throws CustomException
-	{
-		coin.createDatabasePsql();
-	}
 	
-	public void setMysql()
+	  public void createDatabasePsql()throws CustomException 
+	  {
+	    coin.createDatabasePsql(); 
+	   }
+	 
+	
+	public void setMysql()throws CustomException
 	{
 		coin.setMysql();
 	}
 	
-	public void setPsql()
+	public void setPsql()throws CustomException
 	{
 		coin.setPsql();
 	}

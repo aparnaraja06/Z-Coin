@@ -77,7 +77,7 @@ public class SelectDb extends HttpServlet {
 		}
 		catch(CustomException e)
 		{
-			System.out.println("Exce : "+e.getMessage());
+			
 			String msg=e.getMessage();
 			
 			ErrorMsg err = ErrorMsg.valueOf(msg);

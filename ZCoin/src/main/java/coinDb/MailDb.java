@@ -14,24 +14,13 @@ import user.User;
 
 public class MailDb {
 	
-	ChooseDb store = null;
 	
-	public void setMysql()
-	{
-		store = new MysqlOperation();
-	}
-	
-	public void setPsql()
-	{
-		store = new PsqlOperation();
-	}
-	
-	public boolean checkDomainInteger()throws CustomException
+	public boolean checkDomainInteger(PsqlOperation psql)throws CustomException
 	{
 		boolean domain=false;
 		
-		try (PreparedStatement statement = store.getConnection().
-				prepareStatement(store.checkDomainInteger()))
+		try (PreparedStatement statement = psql.getConnection().
+				prepareStatement(psql.checkDomainInteger()))
 		{
 			try (ResultSet result = statement.executeQuery()) 
 			{
@@ -53,12 +42,12 @@ public class MailDb {
 		}
 	}
 	
-	public boolean checkDomainMail()throws CustomException
+	public boolean checkDomainMail(PsqlOperation psql)throws CustomException
 	{
 		boolean domain=false;
 		
-		try (PreparedStatement statement = store.getConnection().
-				prepareStatement(store.checkDomainMail()))
+		try (PreparedStatement statement = psql.getConnection().
+				prepareStatement(psql.checkDomainMail()))
 		{
 			try (ResultSet result = statement.executeQuery()) 
 			{
@@ -80,10 +69,10 @@ public class MailDb {
 		}
 	}
 	
-	public void createDomainInteger()throws CustomException
+	public void createDomainInteger(PsqlOperation psql)throws CustomException
 	{
-		try (PreparedStatement statement = store.getConnection()
-				.prepareStatement(store.createDomainInteger())) {
+		try (PreparedStatement statement = psql.getConnection()
+				.prepareStatement(psql.createDomainInteger())) {
 			statement.execute();
 		} 
 		catch(CustomException e)
@@ -96,10 +85,10 @@ public class MailDb {
 		}
 	}
 	
-	public void createDomainMail()throws CustomException
+	public void createDomainMail(PsqlOperation psql)throws CustomException
 	{
-		try (PreparedStatement statement = store.getConnection()
-				.prepareStatement(store.createDomainMail())) {
+		try (PreparedStatement statement = psql.getConnection()
+				.prepareStatement(psql.createDomainMail())) {
 			statement.executeUpdate();
 		} 
 		catch(CustomException e)
@@ -111,10 +100,10 @@ public class MailDb {
 		}
 	}
 	
-	public void createSequenceId()throws CustomException
+	public void createSequenceId(PsqlOperation psql)throws CustomException
 	{
-		try (PreparedStatement statement = store.getConnection()
-				.prepareStatement(store.createSequenceId())) {
+		try (PreparedStatement statement = psql.getConnection()
+				.prepareStatement(psql.createSequenceId())) {
 			statement.executeUpdate();
 		} 
 		catch(CustomException e)
@@ -127,10 +116,10 @@ public class MailDb {
 		}
 	}
 	
-	public void createSequenceAccount()throws CustomException
+	public void createSequenceAccount(PsqlOperation psql)throws CustomException
 	{
-		try (PreparedStatement statement = store.getConnection()
-				.prepareStatement(store.createSequenceAccount())) {
+		try (PreparedStatement statement = psql.getConnection()
+				.prepareStatement(psql.createSequenceAccount())) {
 			statement.executeUpdate();
 		} 
 		catch(CustomException e)
@@ -143,7 +132,7 @@ public class MailDb {
 		}
 	}
 	
-	public void createDatabase()throws CustomException
+	public void createDatabase(ChooseDb store)throws CustomException
 	{
 		
 		try (PreparedStatement statement = store.getConnection()
@@ -160,7 +149,7 @@ public class MailDb {
 		}
 	}
 	
-	public void createDatabasePsql()throws CustomException
+	public void createDatabasePsql(ChooseDb store)throws CustomException
 	{
 		try (PreparedStatement statement = store.getConnection()
 				.prepareStatement(store.createDatabase())) {
@@ -176,7 +165,7 @@ public class MailDb {
 		}
 	}
 	
-	public void createTable()throws CustomException
+	public void createTable(ChooseDb store)throws CustomException
 	{
 		
 		
@@ -193,7 +182,7 @@ public class MailDb {
 		}
 	}
 	
-	public int getId(String mail)throws CustomException
+	public int getId(ChooseDb store,String mail)throws CustomException
 	{
 		Checker check = new Checker();
 		
@@ -227,7 +216,7 @@ public class MailDb {
 		}
     }
 	
-	public void addMail(String mail,int id)throws CustomException
+	public void addMail(ChooseDb store,String mail,int id)throws CustomException
 	{
 		
 		try (PreparedStatement statement = store.getConnection()
@@ -249,7 +238,7 @@ public class MailDb {
 		}
 	}
 	
-	public String getMailById(int id)throws CustomException
+	public String getMailById(ChooseDb store,int id)throws CustomException
 	{
 		
 		
@@ -284,7 +273,7 @@ public class MailDb {
 		
 	}
 	
-	public boolean checkMailExists(String mail)throws CustomException
+	public boolean checkMailExists(ChooseDb store,String mail)throws CustomException
 	{
 		
 		String mail_id=null;

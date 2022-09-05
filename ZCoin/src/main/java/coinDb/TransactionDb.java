@@ -17,19 +17,8 @@ import transaction.Transaction;
 public class TransactionDb 
 {
 	
-  ChooseDb store = null;
-        
-    public void setMysql()
-     {
-    		store = new MysqlOperation();
-     }
-        
-    public void setPsql()
-    {
-    		store = new PsqlOperation();
-    }
 
-	public void createTable()throws CustomException
+	public void createTable(ChooseDb store)throws CustomException
 	{
 		
 		try (PreparedStatement statement = store.getConnection()
@@ -45,7 +34,7 @@ public class TransactionDb
 		}
 	}
 	
-	public void addTransaction(Transaction transfer)throws CustomException
+	public void addTransaction(ChooseDb store,Transaction transfer)throws CustomException
 	{
 		
 		try (PreparedStatement statement = store.getConnection()
@@ -79,7 +68,7 @@ public class TransactionDb
 
 	}
 	
-	public Map<Integer,List<Transaction>> getAllHistory()throws CustomException
+	public Map<Integer,List<Transaction>> getAllHistory(ChooseDb store)throws CustomException
 	{
 		
 		Map<Integer,List<Transaction>> transactionMap = new HashMap<>();
@@ -127,7 +116,7 @@ public class TransactionDb
 		}
 	}
 	
-	public List<Transaction> getHistoryByUserId(int user_id)throws CustomException
+	public List<Transaction> getHistoryByUserId(ChooseDb store,int user_id)throws CustomException
 	{
 		
 		List<Transaction> list = new ArrayList<>();

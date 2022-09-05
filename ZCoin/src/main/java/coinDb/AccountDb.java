@@ -13,19 +13,7 @@ import user.User;
 
 public class AccountDb {
 	
-	ChooseDb store = null;
-	
-	public void setMysql()
-	{
-		store = new MysqlOperation();
-	}
-	
-	public void setPsql()
-	{
-		store = new PsqlOperation();
-	}
-	
-	public void createTable() throws CustomException
+	public void createTable(ChooseDb store) throws CustomException
 	{
 		
 		try (PreparedStatement statement = store.getConnection()
@@ -43,7 +31,7 @@ public class AccountDb {
 		}
 	}
 	
-	public int addAccount(User user)throws CustomException
+	public int addAccount(ChooseDb store,User user)throws CustomException
 	{
 		
 		int acc_num=0;
@@ -84,7 +72,7 @@ public class AccountDb {
 			
 	}
 	
-	public Account accountDetails(int id)throws CustomException
+	public Account accountDetails(ChooseDb store,int id)throws CustomException
 	{
 		
 		Account account = new Account();
@@ -117,7 +105,7 @@ public class AccountDb {
 		
 	}
 	
-	public int getAccountNumById(int id)throws CustomException
+	public int getAccountNumById(ChooseDb store,int id)throws CustomException
 	{
 		
 		int account_num=0;
@@ -147,7 +135,7 @@ public class AccountDb {
 		}
 	}
 	
-	public double getRcBalance(int acc_num)throws CustomException
+	public double getRcBalance(ChooseDb store,int acc_num)throws CustomException
 	{
 		
 		double amount=0.0;
@@ -180,9 +168,9 @@ public class AccountDb {
 					
 	}
 	
-	public boolean withdrawRc(int acc_num, double amount)throws CustomException
+	public boolean withdrawRc(ChooseDb store,int acc_num, double amount)throws CustomException
 	{
-		double balance = getRcBalance(acc_num);
+		double balance = getRcBalance(store,acc_num);
 		
 		if(balance < amount)
 		{
@@ -212,9 +200,9 @@ public class AccountDb {
 	
 	}
 	
-	public boolean depositRc(int acc_num, double amount)throws CustomException
+	public boolean depositRc(ChooseDb store,int acc_num, double amount)throws CustomException
 	{
-		double balance = getRcBalance(acc_num);
+		double balance = getRcBalance(store,acc_num);
 		
 		double total = balance+amount;
 		
@@ -239,7 +227,7 @@ public class AccountDb {
 	
 	}
 	
-	public double getZcBalance(int acc_num)throws CustomException
+	public double getZcBalance(ChooseDb store,int acc_num)throws CustomException
 	{
 		
 		double amount = 0.0;
@@ -270,9 +258,9 @@ public class AccountDb {
 
 	}
 	
-	public boolean withdrawZc(int acc_num, double amount)throws CustomException
+	public boolean withdrawZc(ChooseDb store,int acc_num, double amount)throws CustomException
 	{
-		double balance = getZcBalance(acc_num);
+		double balance = getZcBalance(store,acc_num);
 		
 		if(balance < amount)
 		{
@@ -303,9 +291,9 @@ public class AccountDb {
 	
 	}
 	
-	public boolean depositZc(int acc_num, double amount)throws CustomException
+	public boolean depositZc(ChooseDb store,int acc_num, double amount)throws CustomException
 	{
-		double balance = getZcBalance(acc_num);
+		double balance = getZcBalance(store,acc_num);
 		
 		double total = balance+amount;
 		
@@ -331,13 +319,13 @@ public class AccountDb {
 	
 	}
 	
-	public boolean buyZCoin(int acc_num, double amount)throws CustomException
+	public boolean buyZCoin(ChooseDb store,int acc_num, double amount)throws CustomException
 	{
 		try
 		{
-		boolean withdraw = withdrawRc(acc_num,amount);
+		boolean withdraw = withdrawRc(store,acc_num,amount);
 		
-		boolean deposit = depositZc(acc_num,amount);
+		boolean deposit = depositZc(store,acc_num,amount);
 		
 		if(withdraw && deposit)
 		{
@@ -356,13 +344,13 @@ public class AccountDb {
 		
 	}
 	
-	public boolean transferZCoin(int from_account, int to_account, double amount)throws CustomException
+	public boolean transferZCoin(ChooseDb store,int from_account, int to_account, double amount)throws CustomException
 	{
 		try
 		{
-			boolean withdraw = withdrawZc(from_account, amount);
+			boolean withdraw = withdrawZc(store,from_account, amount);
 			
-			boolean deposit = depositZc(to_account, amount);
+			boolean deposit = depositZc(store,to_account, amount);
 			
 			if(withdraw && deposit)
 			{
@@ -380,7 +368,7 @@ public class AccountDb {
 			}
 	}
 	
-	public void changeZcAmount(double times)throws CustomException
+	public void changeZcAmount(ChooseDb store,double times)throws CustomException
 	{
 		
 		try (PreparedStatement statement = store.getConnection()

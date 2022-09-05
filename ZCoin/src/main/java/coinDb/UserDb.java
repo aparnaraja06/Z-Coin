@@ -15,21 +15,9 @@ import user.User;
 
 public class UserDb 
 {
-	//MailDb mailObj = new MailDb();
 	
-	ChooseDb store = null;
-	
-	public void setMysql()
-	{
-		store = new MysqlOperation();
-	}
-	
-	public void setPsql()
-	{
-		store = new PsqlOperation();
-	}
 
-	public void createTable()throws CustomException
+	public void createTable(ChooseDb store)throws CustomException
 	{
 		
 		try (PreparedStatement statement = store.getConnection()
@@ -47,7 +35,7 @@ public class UserDb
 	}
 	
 	
-	public String getRole(int id)throws CustomException
+	public String getRole(ChooseDb store,int id)throws CustomException
 	{
 		
 		String role="";
@@ -77,7 +65,7 @@ public class UserDb
 		}
 	}
 	
-	public String getPassword(int id)throws CustomException
+	public String getPassword(ChooseDb store,int id)throws CustomException
 	{
 		
 		String password="";
@@ -107,7 +95,7 @@ public class UserDb
 		}
 	}
 	
-	public int addUser(User user)throws CustomException
+	public int addUser(ChooseDb store,User user)throws CustomException
 	{
 			
 		int id=0;
@@ -154,7 +142,7 @@ public class UserDb
 		
 	}
 	
-	public List<User> showWaitingList(MailDb mailObj)throws CustomException
+	public List<User> showWaitingList(ChooseDb store,MailDb mailObj)throws CustomException
 	{
 		
 		List<User> list = new ArrayList<>();
@@ -173,7 +161,7 @@ public class UserDb
 					int id=result.getInt("user_id");
 					user.setUser_id(id);
 				
-					String mail=mailObj.getMailById(id);
+					String mail=mailObj.getMailById(store,id);
 					
 					user.setMail(mail);
 					user.setName(result.getString("name"));
@@ -199,7 +187,7 @@ public class UserDb
 		}
 	}
 	
-	public User approveAsUser(User user)throws CustomException
+	public User approveAsUser(ChooseDb store,User user)throws CustomException
 	{
 		int id = user.getUser_id();
 		
@@ -223,7 +211,7 @@ public class UserDb
 		}
 	}
 	
-	public User approveAsAdmin(User user)throws CustomException
+	public User approveAsAdmin(ChooseDb store,User user)throws CustomException
 	{
        int id = user.getUser_id();
        
@@ -250,7 +238,7 @@ public class UserDb
 		}
 	}
 	
-	public User getUser(int id,MailDb mailObj)throws CustomException
+	public User getUser(ChooseDb store,int id,MailDb mailObj)throws CustomException
 	{
 		
 		User user = new User();
@@ -268,7 +256,7 @@ public class UserDb
 					user.setHuman_id(result.getString("human_id"));
 					user.setMobile(result.getLong("mobile"));
 					user.setRc_amount(result.getDouble("rc_amount"));
-					String mail=mailObj.getMailById(id);
+					String mail=mailObj.getMailById(store,id);
 					user.setMail(mail);
 				}
 				
@@ -286,7 +274,7 @@ public class UserDb
 		
 	}
 	
-	public void changePassword(String pass,int id)throws CustomException
+	public void changePassword(ChooseDb store,String pass,int id)throws CustomException
 	{
 		
 		try(PreparedStatement statement =store.getConnection()
@@ -308,7 +296,7 @@ public class UserDb
 		
 	}
 	
-	public boolean updateName(String name,int id)throws CustomException
+	public boolean updateName(ChooseDb store,String name,int id)throws CustomException
 	{
 		
 		try(PreparedStatement statement =store.getConnection()

@@ -7,7 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 import account.Account;
+import operation.ChooseDb;
+import operation.CreateInstance;
 import operation.CustomException;
+import operation.MysqlOperation;
+import operation.PsqlOperation;
 import transaction.Transaction;
 import user.User;
 
@@ -20,110 +24,178 @@ public class CoinDb
 	AccountDb accountObj = new AccountDb();
 	MailDb mailObj = new MailDb();
 	TransactionDb transactionObj = new TransactionDb();
+	ChooseDb store = null;
 	
 	public void createDatabase()throws CustomException
 	{
-		mailObj.createDatabase();
+		mailObj.createDatabase(store);
 	}
 	
-	public void createDatabasePsql()throws CustomException
+	
+	 public void createDatabasePsql()throws CustomException 
+	 {
+	  mailObj.createDatabasePsql(store); 
+	 }
+	 
+	
+	public void setMysql()throws CustomException
 	{
-		mailObj.createDatabasePsql();
+		store = CreateInstance.COINOPERATION.getMysqlInstance();
+		
 	}
 	
-	public void setMysql()
+	public void setPsql()throws CustomException
 	{
-		userObj.setMysql();
-		mailObj.setMysql();
-		accountObj.setMysql();
-		transactionObj.setMysql();
-	}
-	
-	public void setPsql()
-	{
-		userObj.setPsql();
-		mailObj.setPsql();
-		accountObj.setPsql();
-		transactionObj.setPsql();
+		store = CreateInstance.COINOPERATION.getPsqlInstance();
 	}
 	
 	public void createDomainInteger()throws CustomException
 	{
-		mailObj.createDomainInteger();
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+		mailObj.createDomainInteger(psql);
 		
 	}
 	
 	public void createDomainMail()throws CustomException
 	{
-	mailObj.createDomainMail();
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+	     mailObj.createDomainMail(psql);
 	}
 	
 	public void createSequence()throws CustomException
 	{
-		mailObj.createSequenceId();
-		mailObj.createSequenceAccount();
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+		mailObj.createSequenceId(psql);
+		mailObj.createSequenceAccount(psql);
 	}
 	
 	public void createTable()throws CustomException
 	{
-		userObj.createTable();
-		accountObj.createTable();
-		mailObj.createTable();
-		transactionObj.createTable();
+		MysqlOperation mysql = CreateInstance.COINOPERATION.getMysqlInstance();
+		
+		userObj.createTable(mysql);
+		accountObj.createTable(mysql);
+		mailObj.createTable(mysql);
+		transactionObj.createTable(mysql);
+		
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+		userObj.createTable(psql);
+		mailObj.createTable(psql);
+		accountObj.createTable(psql);
+		transactionObj.createTable(psql);
 	}
 	
 	public String getRole(int id)throws CustomException
 	{
-		return userObj.getRole(id);
+		return userObj.getRole(store,id);
 	}
 	
 	public String getPassword(int id)throws CustomException
 	{
-		return userObj.getPassword(id);
+		return userObj.getPassword(store,id);
 	}
 		
 	public int addUser(User user)throws CustomException
 	{
+		int user_id=0;
 		
-		return userObj.addUser(user);
+		MysqlOperation mysql = CreateInstance.COINOPERATION.getMysqlInstance();
+		
+		 user_id = userObj.addUser(mysql,user);
+		 
+	    PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+	    
+	    user_id = userObj.addUser(psql, user);
+	    
+	    return user_id;
 	}
 	
 	public int getId(String mail)throws CustomException
 	{
-		return mailObj.getId(mail);
+		
+		return mailObj.getId(store,mail);
 	}
 	
 	public void addMail(String mail,int id)throws CustomException
 	{
-		mailObj.addMail(mail,id);
+		MysqlOperation mysql = CreateInstance.COINOPERATION.getMysqlInstance();
+		
+		mailObj.addMail(mysql,mail,id);
+		
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+		mailObj.addMail(psql, mail, id);
+		
 	}
 	public List<User> showWaitingList()throws CustomException
 	{
-		return userObj.showWaitingList(mailObj);
+		return userObj.showWaitingList(store,mailObj);
 	}
 	public User approveAsUser(User user)throws CustomException
 	{
-		return userObj.approveAsUser(user);
+		User user_obj = null;
+		
+		MysqlOperation mysql = CreateInstance.COINOPERATION.getMysqlInstance();
+		
+		user_obj=userObj.approveAsUser(mysql,user);
+		
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+		user_obj=userObj.approveAsUser(psql, user);
+		
+		return user_obj;
 	}
 	public User approveAsAdmin(User user)throws CustomException
 	{
-		return userObj.approveAsAdmin(user);
+       User user_obj = null;
+		
+		MysqlOperation mysql = CreateInstance.COINOPERATION.getMysqlInstance();
+		
+		user_obj = userObj.approveAsAdmin(mysql,user);
+		
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+		user_obj = userObj.approveAsAdmin(psql, user);
+		
+		return user_obj;
 	}
 	public int addAccount(User user)throws CustomException
 	{
-		return accountObj.addAccount(user);
+		int acc_num=0;
+		
+		MysqlOperation mysql = CreateInstance.COINOPERATION.getMysqlInstance();
+		
+		acc_num = accountObj.addAccount(mysql,user);
+		
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+		acc_num = accountObj.addAccount(psql, user);
+		
+		return acc_num;
 	}
 	public Account accountDetails(int id)throws CustomException
 	{
-		return accountObj.accountDetails(id);
+		return accountObj.accountDetails(store,id);
 	}
 	public User getUser(int id)throws CustomException
 	{
-		return userObj.getUser(id,mailObj);
+      
+		return userObj.getUser(store,id,mailObj);
+		
 	}
 	public void changePassword(String pass,int id)throws CustomException
 	{
-		userObj.changePassword(pass, id);
+		MysqlOperation mysql = CreateInstance.COINOPERATION.getMysqlInstance();
+		
+		userObj.changePassword(mysql,pass, id);
+		
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+		userObj.changePassword(psql, pass, id);
 	}
 	
 	public double zCoinRate()
@@ -153,7 +225,13 @@ public class CoinDb
 	
 	public void changeZcAmount(double times)throws CustomException
 	{
-		accountObj.changeZcAmount( times);
+		MysqlOperation mysql = CreateInstance.COINOPERATION.getMysqlInstance();
+		
+		accountObj.changeZcAmount( mysql,times);
+		
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+		accountObj.changeZcAmount(psql, times);
 	}
 	
 	public String getDate()
@@ -173,64 +251,124 @@ public class CoinDb
 	
 	public int getAccountNumById(int id)throws CustomException
 	{
-		return accountObj.getAccountNumById(id);
+		return accountObj.getAccountNumById(store,id);
 	}
 	
 	public double getRcBalance(int acc_num)throws CustomException
 	{
-		return accountObj.getRcBalance(acc_num);
+		return accountObj.getRcBalance(store,acc_num);
 	}
 	
 	public boolean withdrawRc(int acc_num, double amount)throws CustomException
 	{
-		return accountObj.withdrawRc(acc_num, amount);
+		boolean withdraw=false;
+		
+		MysqlOperation mysql = CreateInstance.COINOPERATION.getMysqlInstance();
+		
+		withdraw = accountObj.withdrawRc(mysql,acc_num, amount);
+		
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+		withdraw = accountObj.withdrawRc(psql, acc_num, amount);
+		
+		return withdraw;
 	}
 	
 	public boolean depositRc(int acc_num, double amount)throws CustomException
 	{
-		return accountObj.depositRc(acc_num, amount);
+         boolean deposit=false;
+		
+		MysqlOperation mysql = CreateInstance.COINOPERATION.getMysqlInstance();
+		
+		deposit =  accountObj.depositRc(mysql,acc_num, amount);
+		
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+		deposit = accountObj.depositRc(psql, acc_num, amount);
+		
+		return deposit;
 	}
 	
 	public boolean buyZCoin(int acc_num, double amount)throws CustomException
 	{
-		return accountObj.buyZCoin(acc_num, amount);
+		 boolean buy=false;
+			
+	    MysqlOperation mysql = CreateInstance.COINOPERATION.getMysqlInstance();
+	    
+		buy = accountObj.buyZCoin(mysql,acc_num, amount);
+		
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+		buy = accountObj.buyZCoin(psql, acc_num, amount);
+		
+		return buy;
 	}
 	
 	public boolean transferZCoin(int from_account, int to_account, double amount)throws CustomException
 	{
-		return accountObj.transferZCoin(from_account, to_account, amount);
+		boolean transfer=false;
+		
+	    MysqlOperation mysql = CreateInstance.COINOPERATION.getMysqlInstance();
+	    
+		 transfer = accountObj.transferZCoin(mysql,from_account, to_account, amount);
+		 
+		 PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		 
+		 transfer = accountObj.transferZCoin(psql, from_account, to_account, amount);
+		 
+		 return transfer;
 	}
 	
 	public void addTransaction(Transaction transfer)throws CustomException
 	{
-		transactionObj.addTransaction(transfer);
+		MysqlOperation mysql = CreateInstance.COINOPERATION.getMysqlInstance();
+		 
+		transactionObj.addTransaction(mysql,transfer);
+		
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+		transactionObj.addTransaction(psql, transfer);
 	}
 	
 	public Map<Integer,List<Transaction>> getAllHistory()throws CustomException
 	{
-		return transactionObj.getAllHistory();
+		return transactionObj.getAllHistory(store);
 	}
 	
 	public List<Transaction> getHistoryByUserId(int user_id)throws CustomException
 	{
-		return transactionObj.getHistoryByUserId(user_id);
+		return transactionObj.getHistoryByUserId(store,user_id);
 	}
 	
 	public boolean checkMailExists(String mail)throws CustomException
 	{
-		return mailObj.checkMailExists(mail);
+		return mailObj.checkMailExists(store,mail);
 	}
 	public boolean updateName(String name,int id)throws CustomException
 	{
-		return userObj.updateName(name, id);
+		boolean update= false;
+		
+		MysqlOperation mysql = CreateInstance.COINOPERATION.getMysqlInstance();
+		
+		update = userObj.updateName(mysql,name, id);
+		
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+		update = userObj.updateName(psql, name, id);
+		
+		return update;
 	}
 	public boolean checkDomainInteger()throws CustomException
 	{
-		return mailObj.checkDomainInteger();
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+		return mailObj.checkDomainInteger(psql);
 	}
 	public boolean checkDomainMail()throws CustomException
 	{
-		return mailObj.checkDomainMail();
+		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
+		
+		return mailObj.checkDomainMail(psql);
 	}
 	
 	
