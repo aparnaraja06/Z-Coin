@@ -180,7 +180,7 @@ public class PsqlOperation implements ChooseDb{
 	@Override
 	public String getZcBalance() {
 		
-       String query = PsqlQuery.UPDATE_ZC_AMOUNT.getQuery();
+       String query = PsqlQuery.GET_ZC_AMOUNT.getQuery();
 		
 		return query;
 	}

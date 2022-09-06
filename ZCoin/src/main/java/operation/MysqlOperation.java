@@ -180,7 +180,7 @@ public class MysqlOperation implements ChooseDb{
 	@Override
 	public String getZcBalance() {
 		
-		String query = MysqlQuery.UPDATE_ZC_AMOUNT.getQuery();
+		String query = MysqlQuery.GET_ZC_AMOUNT.getQuery();
 		
 		return query;
 	}

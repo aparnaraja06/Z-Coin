@@ -253,6 +253,7 @@ public class AccountDb {
 			throw new CustomException(e.getMessage());
 		}
 		catch (Exception e) {
+			System.out.println("err : "+e.getMessage());
 			throw new CustomException("Unable to get balance");
 		}
 
