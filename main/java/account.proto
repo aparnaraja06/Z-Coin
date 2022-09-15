@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package account;
+
+option java_package = "account";
+option java_outer_classname = "ZCoin";
+
+message Account{
+
+        int32 user_id = 1;
+        int32 account_num = 2;
+        double rc_amount = 3;
+       double zc_amount = 4;
+       
+}
+
+
