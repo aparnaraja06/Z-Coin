@@ -18,7 +18,6 @@ public class Transaction {
 		
 		this.date = date;
 		
-		ZCoin.Transaction.newBuilder().setDate(date).build();
 	}
 
 	public int getUser_id() {
@@ -30,7 +29,6 @@ public class Transaction {
 		
 		this.user_id = user_id;
 		
-		ZCoin.Transaction.newBuilder().setUserId(user_id).build();
 	}
 
 	public int getFrom_account() {
@@ -42,7 +40,6 @@ public class Transaction {
 		
 		this.from_account = from_account;
 		
-		ZCoin.Transaction.newBuilder().setFromAccount(from_account).build();
 	}
 
 	public int getTo_account() {
@@ -54,7 +51,6 @@ public class Transaction {
 		
 		this.to_account = to_account;
 		
-		ZCoin.Transaction.newBuilder().setToAccount(to_account).build();
 	}
 
 	public String getType() {
@@ -66,7 +62,6 @@ public class Transaction {
 		
 		this.type = type;
 		
-		ZCoin.Transaction.newBuilder().setType(type).build();
 		
 	}
 
@@ -79,7 +74,6 @@ public class Transaction {
 		
 		this.amount = amount;
 		
-		ZCoin.Transaction.newBuilder().setAmount(amount).build();
 	}
 
 	@Override

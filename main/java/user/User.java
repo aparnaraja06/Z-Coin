@@ -14,11 +14,6 @@ public class User {
 
 	public String getMail() {
 		
-		
-		 // ZCoin.User user = ZCoin.User.newBuilder().build();
-		 
-		 //return user.getMail();
-		 
 
 		return mail;
 	}
@@ -27,7 +22,6 @@ public class User {
 		
 		this.mail = mail;
 		
-		ZCoin.User.newBuilder().setMail(mail).build();
 	}
 
 	public int getUser_id() {
@@ -39,7 +33,7 @@ public class User {
 		
 		this.user_id = user_id;
 		
-		ZCoin.User.newBuilder().setUserId(user_id).build();
+
 	}
 
 	public String getName() {
@@ -51,7 +45,6 @@ public class User {
 		
 		this.name = name;
 		
-		ZCoin.User.newBuilder().setName(name).build();
 	}
 
 	public long getMobile() {
@@ -63,7 +56,6 @@ public class User {
 		
 		this.mobile = mobile;
 		
-		ZCoin.User.newBuilder().setMobile(mobile).build();
 	}
 
 	public String getHuman_id() {
@@ -75,7 +67,6 @@ public class User {
 		
 		this.human_id = human_id;
 		
-		ZCoin.User.newBuilder().setHumanId(human_id).build();
 	}
 
 	public String getPassword() {
@@ -87,7 +78,6 @@ public class User {
 		
 		this.password = password;
 		
-		ZCoin.User.newBuilder().setPassword(password).build();
 	}
 
 	public double getRc_amount() {
@@ -99,7 +89,6 @@ public class User {
 		
 		this.rc_amount = rc_amount;
 		
-		ZCoin.User.newBuilder().setRcAmount(rc_amount).build();
 	}
 
 	public String getRole() {
@@ -111,7 +100,6 @@ public class User {
 		
 		this.role = role;
 		
-		ZCoin.User.newBuilder().setRole(role).build();
 	}
 
 	public boolean isApproved() {
@@ -123,7 +111,6 @@ public class User {
 		
 		this.approved = approved;
 		
-		ZCoin.User.newBuilder().setApproved(approved).build();
 	}
 
 	@Override

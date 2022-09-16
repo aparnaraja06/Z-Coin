@@ -16,7 +16,6 @@ public class Account {
 		
 		this.user_id = user_id;
 		
-		ZCoin.Account.newBuilder().setUserId(user_id).build();
 	}
 
 	public int getAccount_num() {
@@ -28,7 +27,6 @@ public class Account {
 		
 		this.account_num = account_num;
 		
-		ZCoin.Account.newBuilder().setAccountNum(account_num).build();
 	}
 
 	public double getRc_amount() {
@@ -40,7 +38,6 @@ public class Account {
 		
 		this.rc_amount = rc_amount;
 		
-		ZCoin.Account.newBuilder().setRcAmount(rc_amount).build();
 	}
 
 	public double getZc_amount() {
@@ -52,7 +49,6 @@ public class Account {
 		
 		this.zc_amount = zc_amount;
 		
-		ZCoin.Account.newBuilder().setZcAmount(zc_amount).build();
 	}
 
 	@Override
