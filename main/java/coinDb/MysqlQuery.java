@@ -70,7 +70,13 @@ public enum MysqlQuery {
 
 	GET_ROLE_BY_ID("SELECT role FROM user WHERE user_id=?"),
 
-	GET_PASSWORD("SELECT password FROM user WHERE user_id=?");
+	GET_PASSWORD("SELECT password FROM user WHERE user_id=?"),
+	
+	ALL_USER("SELECT * FROM user"),
+	
+	ALL_MAIL("SELECT * FROM mail"),
+	
+	ALL_ACCOUNTS("SELECT * FROM account");
 
 	private final String query;
 

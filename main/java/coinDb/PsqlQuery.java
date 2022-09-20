@@ -89,7 +89,13 @@ public enum PsqlQuery
 	
 	GET_ROLE_BY_ID("SELECT role FROM customer WHERE user_id=?"),
     
-	GET_PASSWORD("SELECT password FROM customer WHERE user_id=?");
+	GET_PASSWORD("SELECT password FROM customer WHERE user_id=?"),
+	
+	ALL_USER("SELECT * FROM customer"),
+	
+	ALL_MAIL("SELECT * FROM mail"),
+	
+	ALL_ACCOUNTS("SELECT * FROM account");
 	
 	
 	private final String query;

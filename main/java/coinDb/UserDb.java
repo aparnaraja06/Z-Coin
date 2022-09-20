@@ -4,12 +4,16 @@ import java.sql.PreparedStatement;
 
 
 
+
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import cache.CoinCache;
 import operation.ChooseDb;
+import operation.CreateInstance;
 import operation.CustomException;
+import redis.clients.jedis.Jedis;
 
 
 public class UserDb 
@@ -141,10 +145,14 @@ public class UserDb
 		
 	}
 	
-	public List<user.ZCoin.User.Builder> showWaitingList(ChooseDb store,MailDb mailObj)throws CustomException
+	public Jedis showWaitingList(ChooseDb store,MailDb mailObj)throws CustomException
 	{
 		
-		List<user.ZCoin.User.Builder> list = new ArrayList<>();
+		//List<user.ZCoin.User.Builder> list = new ArrayList<>();
+		
+		CoinCache cache = CreateInstance.COINOPERATION.getCoinCache();
+		
+		Jedis list = cache.setJedis();
 		
 		
 		try(PreparedStatement statement =store.getConnection()
@@ -172,7 +180,7 @@ public class UserDb
 					userObj.setRole(result.getString("role"));
 					
 					
-					list.add(userObj);
+					list.lpush("list", userObj.toString());
 				}
 				
 				return list;
@@ -318,6 +326,46 @@ public class UserDb
 			throw new CustomException("Unable to update name"); // No I18N
 		}
 		
+	}
+	
+	public Jedis getAllUsers(ChooseDb store)throws CustomException
+	{
+		CoinCache cache = CreateInstance.COINOPERATION.getCoinCache();
+		
+		Jedis userDetails = cache.setJedis();
+	
+		try(PreparedStatement statement =store.getConnection()
+				.prepareStatement(store.allUser()))
+		{
+			try (ResultSet result = statement.executeQuery()) 
+			{
+				while (result.next()) 
+				{
+					user.ZCoin.User.Builder userObj = user.ZCoin.User.newBuilder();
+					
+					userObj.setName(result.getString("name"));
+					userObj.setMobile(result.getLong("mobile"));
+					userObj.setHumanId(result.getString("human_id"));
+					userObj.setPassword(result.getString("password"));
+					userObj.setRcAmount(result.getDouble("rc_amount"));
+					userObj.setApproved(result.getBoolean("approved"));
+					userObj.setRole(result.getString("role"));
+					
+					int id = result.getInt("user_id");
+					
+					userDetails.set(Integer.toString(id), userObj.toString());
+					
+				}
+				return userDetails;
+			}
+		}
+		catch(CustomException e)
+		{
+			throw new CustomException(e.getMessage());
+		}
+		catch (Exception e) {
+			throw new CustomException("Unable to fetch data"); // No I18N
+		}
 	}
 
 }

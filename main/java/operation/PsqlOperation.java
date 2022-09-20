@@ -297,4 +297,28 @@ public class PsqlOperation implements ChooseDb{
 		
 	}
 
+	@Override
+	public String allUser() {
+		
+		String query = PsqlQuery.ALL_USER.getQuery();
+		
+		return query;
+	}
+
+	@Override
+	public String allMail() {
+		
+		String query = PsqlQuery.ALL_MAIL.getQuery();
+		
+		return query;
+	}
+
+	@Override
+	public String allAccounts() {
+		
+		String query = PsqlQuery.ALL_ACCOUNTS.getQuery();
+		
+		return query;
+	}
+
 }

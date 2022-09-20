@@ -286,4 +286,28 @@ public class MysqlOperation implements ChooseDb{
 		return null;
 	}
 
+	@Override
+	public String allUser() {
+		
+		String query = MysqlQuery.ALL_USER.getQuery();
+		
+		return query;
+	}
+
+	@Override
+	public String allMail() {
+		
+		String query = MysqlQuery.ALL_MAIL.getQuery();
+		
+		return query;
+	}
+
+	@Override
+	public String allAccounts() {
+		
+		String query = MysqlQuery.ALL_ACCOUNTS.getQuery();
+		
+		return query;
+	}
+
 }

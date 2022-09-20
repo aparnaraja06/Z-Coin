@@ -3,14 +3,18 @@ package coinDb;
 import java.sql.PreparedStatement;
 
 
+
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cache.CoinCache;
 import operation.ChooseDb;
+import operation.CreateInstance;
 import operation.CustomException;
+import redis.clients.jedis.Jedis;
 
 
 public class TransactionDb 
@@ -70,6 +74,10 @@ public class TransactionDb
 	public Map<Integer,List<transaction.ZCoin.Transaction.Builder>> getAllHistory(ChooseDb store)throws CustomException
 	{
 		
+		CoinCache cache = CreateInstance.COINOPERATION.getCoinCache();
+		
+		//Jedis transactionMap = cache.setJedis();
+		
 		Map<Integer,List<transaction.ZCoin.Transaction.Builder>> transactionMap = new HashMap<>();
 		
 		try (PreparedStatement statement = store.getConnection()
@@ -81,11 +89,14 @@ public class TransactionDb
 				{
 					int user_id = result.getInt("user_id");
 					
-					List<transaction.ZCoin.Transaction.Builder> list = transactionMap.get(user_id);
+					//String value = transactionMap
+							//.get(Integer.toString(user_id));
 					
-					if(list==null)
+					Jedis list = null;
+					
+					//if(value==null)
 					{
-						list = new ArrayList<>();
+						list = cache.setJedis();
 					}
 
 					transaction.ZCoin.Transaction.Builder transfer = transaction.ZCoin.Transaction.newBuilder();
@@ -97,9 +108,9 @@ public class TransactionDb
 					transfer.setType(result.getString("type"));
 					transfer.setDate(result.getString("date"));
 					
-					list.add(transfer);
+					list.lpush(Integer.toString(user_id), transfer.toString());
 					
-					transactionMap.put(user_id, list);
+					//transactionMap.put(Integer.toString(user_id),);
 					
 				}
 				

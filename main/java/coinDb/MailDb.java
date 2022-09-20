@@ -4,12 +4,16 @@ import java.sql.PreparedStatement;
 
 
 import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Map;
 
-
+import cache.CoinCache;
 import operation.Checker;
 import operation.ChooseDb;
+import operation.CreateInstance;
 import operation.CustomException;
 import operation.PsqlOperation;
+import redis.clients.jedis.Jedis;
 
 
 public class MailDb {
@@ -305,6 +309,38 @@ public class MailDb {
 		}
 		catch (Exception e) {
 			throw new CustomException("MAIL");
+		}
+	}
+	
+	public Jedis getAllMail(ChooseDb store)throws CustomException
+	{
+		CoinCache cache = CreateInstance.COINOPERATION.getCoinCache();
+		
+		Jedis mailDetails = cache.setJedis();
+	
+		try (PreparedStatement statement = store.getConnection()
+				.prepareStatement(store.allMail())) 
+		{
+			try (ResultSet result = statement.executeQuery()) 
+			{
+				while (result.next()) 
+				{
+					String mail = result.getString("mail_id");
+					int id = result.getInt("user_id");
+					
+					mailDetails.set(mail, Integer.toString(id));
+				}
+				
+				return mailDetails;
+			}
+			
+		}
+		catch(CustomException e)
+		{
+			throw new CustomException(e.getMessage());
+		}
+		catch (Exception e) {
+			throw new CustomException("unable to get all mail");
 		}
 	}
 	

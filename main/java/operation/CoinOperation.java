@@ -1,12 +1,15 @@
 package operation;
 
+
+
 import java.util.List;
+
 
 
 import java.util.Map;
 
-
 import coinDb.CoinDb;
+import redis.clients.jedis.Jedis;
 
 
 
@@ -43,6 +46,35 @@ public class CoinOperation
 		coin.setPsql();
 	}
 	
+	public Jedis setUserMap()throws CustomException
+	{
+		Jedis userMap = coin.getAllUsers();
+		
+		return userMap;
+		
+	}
+	
+	public Jedis setAccountMap()throws CustomException
+	{
+		Jedis accountMap = coin.allAccounts();
+		
+		return accountMap;
+	}
+	
+	public Jedis setMailMap()throws CustomException
+	{
+		Jedis mailMap = coin.getAllMail();
+		
+		return mailMap;
+	}
+	
+	public Jedis getWaitingList()throws CustomException
+	{
+		Jedis waitingList = coin.showWaitingList();
+		
+		return waitingList;
+	}
+	
 	public void createDomainInteger()throws CustomException
 	{
 		coin.createDomainInteger();
@@ -60,95 +92,169 @@ public class CoinOperation
 	
 	public String getRole(int id)throws CustomException
 	{
-		return coin.getRole(id);
+		Jedis userMap = setUserMap();
+			
+		return CreateInstance.COINOPERATION.getCoinCache().getRole(userMap, id);
 	}
 	
 	public String getPassword(int id)throws CustomException
 	{
-		return coin.getPassword(id);
+		Jedis userMap = setUserMap();
+		
+		return CreateInstance.COINOPERATION.getCoinCache().getPassword(userMap, id);
 	}
 		
 	public int addUser(user.ZCoin.User.Builder user)throws CustomException
 	{
 		
-		return coin.addUser(user);
+		int id = coin.addUser(user);
+		
+		Jedis userMap = setUserMap();
+		
+		CreateInstance.COINOPERATION.getCoinCache().addUser(userMap, id, user);
+		
+		return id;
 	}
 	
 	public int getId(String mail)throws CustomException
 	{
-		return coin.getId(mail);
+		 Jedis mailMap = setMailMap();
+		 
+		 return CreateInstance.COINOPERATION.getCoinCache().getId(mailMap, mail);
 	}
 	
 	public void addMail(String mail,int id)throws CustomException
 	{
+		Jedis mailMap = setMailMap();
+		
 		coin.addMail(mail,id);
+		
+		CreateInstance.COINOPERATION.getCoinCache().addMail(mailMap, mail, id);
+		
 	}
-	public List<user.ZCoin.User.Builder> showWaitingList()throws CustomException
+	public Jedis showWaitingList()throws CustomException
 	{
-		return coin.showWaitingList();
+		Jedis waitingList = getWaitingList();
+		
+		return CreateInstance.COINOPERATION.getCoinCache().showWaitingList(waitingList);
 	}
 	public user.ZCoin.User.Builder approveAsUser(user.ZCoin.User.Builder user)throws CustomException
 	{
-		return coin.approveAsUser(user);
+		Jedis userMap = setUserMap();
+		
+		user.ZCoin.User.Builder userObj = coin.approveAsUser(user);
+		
+		return CreateInstance.COINOPERATION.getCoinCache().approveAsUser(userMap, userObj);
 	}
 	public user.ZCoin.User.Builder approveAsAdmin(user.ZCoin.User.Builder user)throws CustomException
 	{
-		return coin.approveAsAdmin(user);
+         Jedis userMap = setUserMap();
+		
+		user.ZCoin.User.Builder userObj = coin.approveAsUser(user);
+		
+		coin.approveAsAdmin(user);
+		
+		return CreateInstance.COINOPERATION.getCoinCache().approveAsAdmin(userMap, userObj);
 	}
 	public int addAccount(user.ZCoin.User.Builder user)throws CustomException
 	{
-		return coin.addAccount(user);
+		Jedis accountMap = setAccountMap();
+		
+		int acc_num = coin.addAccount(user);
+		
+		CreateInstance.COINOPERATION.getCoinCache().addAccount(accountMap, acc_num, user);
+		
+		return acc_num;
 	}
+	
 	public account.ZCoin.Account.Builder accountDetails(int id)throws CustomException
 	{
-		return coin.accountDetails(id);
+		 coin.accountDetails(id);
+		 
+		 Jedis accountMap = setAccountMap();
+			
+		return CreateInstance.COINOPERATION.getCoinCache().accountDetails(accountMap, id);
 	}
+	
 	public user.ZCoin.User.Builder getUser(int id)throws CustomException
 	{
-		return coin.getUser(id);
+		coin.getUser(id);
+		
+        Jedis userMap = setUserMap();
+		
+		return CreateInstance.COINOPERATION.getCoinCache().getUser(userMap, id);
 	}
 	public void changePassword(String pass,int id)throws CustomException
 	{
 		coin.changePassword(pass, id);
+		
+		Jedis userMap = setUserMap();
+		
+		CreateInstance.COINOPERATION.getCoinCache().changePassword(userMap, pass, id);
 	}
 	public double zCoinRate()
 	{
-		return coin.zCoinRate();
+		
+		return CreateInstance.COINOPERATION.getCoinCache().zCoinRate();
+		
 	}
 	public double changeZCoinRate(double amount)throws CustomException
 	{
-		return coin.changeZCoinRate(amount);
+	
+		return CreateInstance.COINOPERATION.getCoinCache().changeZCoinRate(amount);
+		
 	}
 	public void changeZcAmount(double times)throws CustomException
 	{
-		coin.changeZcAmount(times);
+		//pending
+		//coin.changeZcAmount(times);
 	}
 	public String getDate()
 	{
-		return coin.getDate();
+		return CreateInstance.COINOPERATION.getCoinCache().getDate();
+		
 	}
 	public int getAccountNumById(int id)throws CustomException
 	{
-		return coin.getAccountNumById(id);
+	        coin.getAccountNumById(id);
+	        
+	        Jedis accountMap = setAccountMap();
+	        
+	     return CreateInstance.COINOPERATION.getCoinCache().getAccountNumById(accountMap, id);
+	     
 	}
-	public double getRcBalance(int acc_num)throws CustomException
+	
+	public boolean withdrawRc(int id,int acc_num, double amount)throws CustomException
 	{
-		return coin.getRcBalance(acc_num);
+		
+	     coin.withdrawRc(acc_num, amount);
+	     
+	     Jedis accountMap = setAccountMap();
+	     
+	     return CreateInstance.COINOPERATION.getCoinCache().withdrawRc(accountMap, id, acc_num, amount);
 	}
-	public boolean withdrawRc(int acc_num, double amount)throws CustomException
+	public boolean depositRc(int id,int acc_num, double amount)throws CustomException
 	{
-		return coin.withdrawRc(acc_num, amount);
+
+		coin.depositRc(acc_num, amount);
+		
+		Jedis accountMap = setAccountMap();
+		
+		return CreateInstance.COINOPERATION.getCoinCache().depositRc(accountMap, id, acc_num, amount);
 	}
-	public boolean depositRc(int acc_num, double amount)throws CustomException
+	
+	public boolean buyZCoin(int id,int acc_num, double amount)throws CustomException
 	{
-		return coin.depositRc(acc_num, amount);
-	}
-	public boolean buyZCoin(int acc_num, double amount)throws CustomException
-	{
-		return coin.buyZCoin(acc_num, amount);
+		
+	     coin.buyZCoin(acc_num, amount);
+	     
+	     Jedis accountMap = setAccountMap();
+	     
+	     return CreateInstance.COINOPERATION.getCoinCache().buyZCoin(accountMap, id, acc_num, amount);
 	}
 	public boolean transferZCoin(int from_account, int to_account, double amount)throws CustomException
 	{
+		//pending
 		return coin.transferZCoin(from_account, to_account, amount);
 	}
 	public void addTransaction(transaction.ZCoin.Transaction.Builder transfer)throws CustomException
@@ -165,11 +271,19 @@ public class CoinOperation
 	}
 	public boolean checkMailExists(String mail)throws CustomException
 	{
-		return coin.checkMailExists(mail);
+		coin.checkMailExists(mail);
+		
+		Jedis mailMap = setMailMap();
+		
+		return CreateInstance.COINOPERATION.getCoinCache().checkMailExists(mailMap, mail);
 	}
 	public boolean updateName(String name,int id)throws CustomException
 	{
-		return coin.updateName(name, id);
+		coin.updateName(name, id);
+		
+		Jedis userMap = setUserMap();
+		
+		return CreateInstance.COINOPERATION.getCoinCache().updateName(userMap, name, id);
 	}
 	public boolean checkDomainInteger()throws CustomException
 	{
@@ -179,5 +293,21 @@ public class CoinOperation
 	{
 		return coin.checkDomainMail();
 	}
+	
+	/*
+	 * public void checkJedis()throws CustomException { CoinCache cache =
+	 * CreateInstance.COINOPERATION.getCoinCache();
+	 * 
+	 * //Jedis list = cache.setJedis();
+	 * 
+	 * List<String> list = new ArrayList<>();
+	 * 
+	 * list.add("Aparna"); list.add("Raja");
+	 * 
+	 * 
+	 * //String value = list.lpop("1");
+	 * 
+	 * System.out.println(list.toString()); }
+	 */
 	
 }

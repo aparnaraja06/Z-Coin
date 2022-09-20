@@ -1,6 +1,6 @@
 package operation;
 
-
+import cache.CoinCache;
 
 public enum CreateInstance {
 	
@@ -14,6 +14,8 @@ COINOPERATION;
 	MysqlOperation mysql = null;
 	
 	PsqlOperation psql = null;
+	
+	CoinCache cache  = null;
 	
 	
 	public CoinOperation getCoinInstance()throws CustomException
@@ -56,6 +58,16 @@ COINOPERATION;
 		}
 		
 		return psql;
+	}
+	
+	public CoinCache getCoinCache()
+	{
+		if(cache==null)
+		{
+			cache = new CoinCache();
+		}
+		
+		return cache;
 	}
 	
 	

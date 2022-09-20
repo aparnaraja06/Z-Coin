@@ -75,5 +75,11 @@ public interface ChooseDb
 	 public String checkDomainInteger();
 	 
 	 public String checkDomainMail();
+	 
+	 public String allUser();
+	 
+	 public String allMail();
+	 
+	 public String allAccounts();
 
 }

@@ -3,22 +3,23 @@ package coinDb;
 import java.text.SimpleDateFormat;
 
 
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 
 import operation.ChooseDb;
 import operation.CreateInstance;
 import operation.CustomException;
 import operation.MysqlOperation;
 import operation.PsqlOperation;
+import redis.clients.jedis.Jedis;
 
 
 public class CoinDb 
 {
 	
-	double zCoin=50;
+	
 
 	UserDb userObj = new UserDb();
 	AccountDb accountObj = new AccountDb();
@@ -131,7 +132,7 @@ public class CoinDb
 		mailObj.addMail(psql, mail, id);
 		
 	}
-	public List<user.ZCoin.User.Builder> showWaitingList()throws CustomException
+	public Jedis showWaitingList()throws CustomException
 	{
 		return userObj.showWaitingList(store,mailObj);
 	}
@@ -198,30 +199,9 @@ public class CoinDb
 		userObj.changePassword(psql, pass, id);
 	}
 	
-	public double zCoinRate()
-	{
-		return zCoin;
-	}
 	
-	public double changeZCoinRate(double amount)throws CustomException
-	{
-		double old = zCoin;
-		
-		zCoin=amount;
-		
-		double times = getDifference(old,zCoin);
-		
-		changeZcAmount(times);
-		
-		return zCoin;
-	}
 	
-	public double getDifference(double old_value,double new_value)
-	{
-		double change = new_value/old_value;
-		
-		return change;
-	}
+	
 	
 	public void changeZcAmount(double times)throws CustomException
 	{
@@ -234,20 +214,7 @@ public class CoinDb
 		accountObj.changeZcAmount(psql, times);
 	}
 	
-	public String getDate()
-	{
-		String result="";
-		
-		long millis=System.currentTimeMillis();
-		
-		SimpleDateFormat format=new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
-		
-		Date date= new Date(millis);
-		
-		result=format.format(date);
-		
-		return result;
-	}
+	
 	
 	public int getAccountNumById(int id)throws CustomException
 	{
@@ -369,6 +336,20 @@ public class CoinDb
 		PsqlOperation psql = CreateInstance.COINOPERATION.getPsqlInstance();
 		
 		return mailObj.checkDomainMail(psql);
+	}
+	
+	public Jedis getAllUsers()throws CustomException
+	{
+		return userObj.getAllUsers(store);
+	}
+	
+	public Jedis getAllMail()throws CustomException
+	{
+		return mailObj.getAllMail(store);
+	}
+	public Jedis allAccounts()throws CustomException
+	{
+		return accountObj.allAccounts(store);
 	}
 	
 	

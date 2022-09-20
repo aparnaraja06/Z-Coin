@@ -54,7 +54,7 @@ public class TransactionServlet extends HttpServlet {
 		String name =  request.getParameter("name");
 		check.validateAmount(name);
 		double amount = Double.parseDouble(name);
-		result = coin.withdrawRc(acc_num, amount);
+		result = coin.withdrawRc(id,acc_num, amount);
 	
 		}
 		else if(request.getParameter("type").equals("deposit"))
@@ -62,7 +62,7 @@ public class TransactionServlet extends HttpServlet {
 			String name =  request.getParameter("name");
 			check.validateAmount(name);
 			double amount = Double.parseDouble(name);
-			result=coin.depositRc(acc_num, amount);
+			result=coin.depositRc(id,acc_num, amount);
 		}
 		else
 		{
@@ -86,6 +86,7 @@ public class TransactionServlet extends HttpServlet {
 			}
 			
 			//int acc_num2 =Integer.parseInt(account2);
+			
 			
 			String amountt = request.getParameter("amount");
 			

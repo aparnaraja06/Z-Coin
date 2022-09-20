@@ -4,9 +4,14 @@ import java.sql.PreparedStatement;
 
 
 import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Map;
 
+import cache.CoinCache;
 import operation.ChooseDb;
+import operation.CreateInstance;
 import operation.CustomException;
+import redis.clients.jedis.Jedis;
 
 public class AccountDb {
 	
@@ -387,6 +392,44 @@ public class AccountDb {
 		}
 		catch (Exception e) {
 			throw new CustomException("Unable to Update amount");
+		}
+	}
+	
+	public Jedis allAccounts(ChooseDb store)throws CustomException
+	{
+		
+		CoinCache cache = CreateInstance.COINOPERATION.getCoinCache();
+		
+		Jedis accountDetails = cache.setJedis();
+		
+		try (PreparedStatement statement = store.getConnection()
+				.prepareStatement(store.allAccounts())) 
+		{
+			try (ResultSet result = statement.executeQuery()) 
+			{
+				while (result.next()) 
+				{
+					account.ZCoin.Account.Builder accountObj = account.ZCoin.Account.newBuilder();
+					
+					int id = result.getInt("user_id");
+					
+					accountObj.setAccountNum(result.getInt("account_num"));
+					accountObj.setRcAmount(result.getDouble("rc_amount"));
+					accountObj.setZcAmount(result.getDouble("zc_amount"));
+					
+					accountDetails.set(Integer.toString(id), accountObj.toString());
+				}
+				
+				return accountDetails;
+					
+				}
+		}
+		catch(CustomException e)
+		{
+			throw new CustomException(e.getMessage());
+		}
+		catch (Exception e) {
+			throw new CustomException("Unable to fetch accounts");
 		}
 	}
 	

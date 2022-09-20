@@ -65,7 +65,7 @@ public class ManageServlet extends HttpServlet {
 					
 					int acc_num = coin.getAccountNumById(id);
 					
-					boolean result = coin.buyZCoin(acc_num, amount);
+					boolean result = coin.buyZCoin(id,acc_num, amount);
 					
 					if(!result)
 					{

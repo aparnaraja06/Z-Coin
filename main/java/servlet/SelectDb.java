@@ -43,6 +43,7 @@ public class SelectDb extends HttpServlet {
 				coin.createDatabase();
 				coin.createTable();
 				
+				
 			}
 			else if(name.equals("psql"))
 			{

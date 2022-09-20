@@ -723,6 +723,15 @@ public final class ZCoin {
         internal_static_account_Account_descriptor,
         new java.lang.String[] { "UserId", "AccountNum", "RcAmount", "ZcAmount", });
   }
+@Override
+public String toString() {
+	
+	return "Account num : "+account.ZCoin.Account.newBuilder().accountNum_+"\nUser Id : "+
+account.ZCoin.Account.newBuilder().userId_+"\nRc Amount : "+account.ZCoin.Account.newBuilder().rcAmount_
++"\nZC Amount : "+account.ZCoin.Account.newBuilder().zcAmount_;
+}
+  
+ 
 
   // @@protoc_insertion_point(outer_class_scope)
 }
