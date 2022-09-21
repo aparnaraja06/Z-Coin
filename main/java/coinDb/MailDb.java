@@ -317,6 +317,8 @@ public class MailDb {
 		CoinCache cache = CreateInstance.COINOPERATION.getCoinCache();
 		
 		Jedis mailDetails = cache.setJedis();
+		
+		mailDetails.flushAll();
 	
 		try (PreparedStatement statement = store.getConnection()
 				.prepareStatement(store.allMail())) 

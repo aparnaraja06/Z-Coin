@@ -297,7 +297,7 @@ public class CoinDb
 		transactionObj.addTransaction(psql, transfer);
 	}
 	
-	public Map<Integer,List<transaction.ZCoin.Transaction.Builder>> getAllHistory()throws CustomException
+	public Jedis getAllHistory()throws CustomException
 	{
 		return transactionObj.getAllHistory(store);
 	}
@@ -340,7 +340,7 @@ public class CoinDb
 	
 	public Jedis getAllUsers()throws CustomException
 	{
-		return userObj.getAllUsers(store);
+		return userObj.getAllUsers(store,mailObj);
 	}
 	
 	public Jedis getAllMail()throws CustomException

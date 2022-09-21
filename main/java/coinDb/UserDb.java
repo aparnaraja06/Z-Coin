@@ -154,6 +154,8 @@ public class UserDb
 		
 		Jedis list = cache.setJedis();
 		
+		list.flushAll();
+		
 		
 		try(PreparedStatement statement =store.getConnection()
 				.prepareStatement(store.showWaitingList()))
@@ -166,7 +168,7 @@ public class UserDb
 					user.ZCoin.User.Builder userObj = user.ZCoin.User.newBuilder();
 					
 					int id=result.getInt("user_id");
-					userObj.setUserId(id);
+					//userObj.setUserId(id);
 				
 					String mail=mailObj.getMailById(store,id);
 					
@@ -174,13 +176,14 @@ public class UserDb
 					userObj.setMail(mail);
 					userObj.setName(result.getString("name"));
 					userObj.setHumanId(result.getString("human_id"));
+					userObj.setPassword(result.getString("password"));
 					userObj.setMobile(result.getLong("mobile"));
 					userObj.setRcAmount(result.getDouble("rc_amount"));
 					userObj.setApproved(result.getBoolean("approved"));
 					userObj.setRole(result.getString("role"));
 					
 					
-					list.lpush("list", userObj.toString());
+					list.set(Integer.toString(id),userObj.toString());
 				}
 				
 				return list;
@@ -328,11 +331,13 @@ public class UserDb
 		
 	}
 	
-	public Jedis getAllUsers(ChooseDb store)throws CustomException
+	public Jedis getAllUsers(ChooseDb store,MailDb mailObj)throws CustomException
 	{
 		CoinCache cache = CreateInstance.COINOPERATION.getCoinCache();
 		
 		Jedis userDetails = cache.setJedis();
+		
+		userDetails.flushAll();
 	
 		try(PreparedStatement statement =store.getConnection()
 				.prepareStatement(store.allUser()))
@@ -352,6 +357,10 @@ public class UserDb
 					userObj.setRole(result.getString("role"));
 					
 					int id = result.getInt("user_id");
+					
+					String mail=mailObj.getMailById(store,id);
+					
+					userObj.setMail(mail);
 					
 					userDetails.set(Integer.toString(id), userObj.toString());
 					

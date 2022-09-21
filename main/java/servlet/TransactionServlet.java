@@ -87,6 +87,7 @@ public class TransactionServlet extends HttpServlet {
 			
 			//int acc_num2 =Integer.parseInt(account2);
 			
+			int to_id = coin.getIdByAccountNum(acc2);
 			
 			String amountt = request.getParameter("amount");
 			
@@ -94,7 +95,7 @@ public class TransactionServlet extends HttpServlet {
 			
 			double get_amount = Double.parseDouble(amountt);
 			
-			result = coin.transferZCoin(acc_num, acc2, get_amount);
+			result = coin.transferZCoin(id,to_id,acc_num, acc2, get_amount);
 			
 			if(!result)
 			{

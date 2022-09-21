@@ -402,6 +402,8 @@ public class AccountDb {
 		
 		Jedis accountDetails = cache.setJedis();
 		
+		accountDetails.flushAll();
+		
 		try (PreparedStatement statement = store.getConnection()
 				.prepareStatement(store.allAccounts())) 
 		{

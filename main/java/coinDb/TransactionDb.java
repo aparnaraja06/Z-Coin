@@ -71,14 +71,17 @@ public class TransactionDb
 
 	}
 	
-	public Map<Integer,List<transaction.ZCoin.Transaction.Builder>> getAllHistory(ChooseDb store)throws CustomException
+	public Jedis getAllHistory(ChooseDb store)throws CustomException
 	{
 		
 		CoinCache cache = CreateInstance.COINOPERATION.getCoinCache();
 		
-		//Jedis transactionMap = cache.setJedis();
+		Jedis transactionMap = cache.setJedis();
 		
-		Map<Integer,List<transaction.ZCoin.Transaction.Builder>> transactionMap = new HashMap<>();
+		transactionMap.flushAll();
+		
+		int count = 0;
+		//Map<Integer,List<transaction.ZCoin.Transaction.Builder>> transactionMap = new HashMap<>();
 		
 		try (PreparedStatement statement = store.getConnection()
 				.prepareStatement(store.getAllHistory())) 
@@ -89,16 +92,19 @@ public class TransactionDb
 				{
 					int user_id = result.getInt("user_id");
 					
-					//String value = transactionMap
-							//.get(Integer.toString(user_id));
+					List<String> list = transactionMap.mget(Integer.toString(user_id));
 					
-					Jedis list = null;
-					
-					//if(value==null)
+					if(count==0 && list!=null)
 					{
-						list = cache.setJedis();
+						list=null;
+						count++;
 					}
-
+					
+					 if(list==null)
+					{
+						list = new ArrayList<>();
+					}
+					
 					transaction.ZCoin.Transaction.Builder transfer = transaction.ZCoin.Transaction.newBuilder();
 					
 					transfer.setUserId(user_id);
@@ -108,9 +114,9 @@ public class TransactionDb
 					transfer.setType(result.getString("type"));
 					transfer.setDate(result.getString("date"));
 					
-					list.lpush(Integer.toString(user_id), transfer.toString());
+					list.add(transfer.toString());
 					
-					//transactionMap.put(Integer.toString(user_id),);
+					transactionMap.set(Integer.toString(user_id), list.toString());
 					
 				}
 				
@@ -122,6 +128,8 @@ public class TransactionDb
 			throw new CustomException(e.getMessage());
 		}
 		catch (Exception e) {
+			
+			System.out.println("Ex : "+e.getMessage());
 			throw new CustomException("Unable to get history");
 		}
 	}

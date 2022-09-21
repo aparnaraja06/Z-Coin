@@ -2,9 +2,13 @@ package cache;
 
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
-import operation.ChooseDb;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import operation.CustomException;
 import redis.clients.jedis.Jedis;
 
@@ -102,9 +106,21 @@ public class CoinCache {
 		mailMap.set(mail, Integer.toString(id));
 	}
 	
-	public Jedis showWaitingList(Jedis waitingList)throws CustomException
+	public List<user.ZCoin.User.Builder> showWaitingList(Jedis waitingList)throws CustomException
 	{
-		return waitingList;
+
+		List<user.ZCoin.User.Builder> list = new ArrayList<>();
+		
+		for(String key : waitingList.keys("*"))
+		{
+			int id = Integer.valueOf(key);
+			
+			user.ZCoin.User.Builder user = getUser(waitingList,id);
+			
+			list.add(user);
+		}
+		
+		return list;
 	}
 	
 	public user.ZCoin.User.Builder approveAsUser(Jedis userMap,user.ZCoin.User.Builder user)throws CustomException
@@ -213,6 +229,7 @@ public class CoinCache {
 
 			if(each.contains(":"))
 			{
+				
 				String[] arr = each.split(" ");
 				
 				for(int i=0;i<arr.length;i++)
@@ -260,6 +277,12 @@ public class CoinCache {
 						{
 							userr.setApproved(Boolean.valueOf(arr[i]));
 						}
+						else if(count==8)
+						{
+							String mail = removeQuotes(arr[i]);
+							
+							userr.setMail(mail);
+						}
 					}
 				}
 			}
@@ -273,7 +296,25 @@ public class CoinCache {
 		return zCoin;
 	}
 	
-	public double changeZCoinRate(double amount)throws CustomException
+	public void changeZcAmount(Jedis accountMap,double times)throws CustomException
+	{
+		for(String key : accountMap.keys("*"))
+		{
+			int id = Integer.valueOf(key);
+			
+			account.ZCoin.Account.Builder accountObj = accountDetails(accountMap,id);
+			
+			double amount = accountObj.getZcAmount();
+			
+			double total = amount * times;
+			
+			accountObj.setZcAmount(total);
+			
+			accountMap.set(key, accountObj.toString());
+		}
+	}
+	
+	public double changeZCoinRate(Jedis accountMap,double amount)throws CustomException
 	{
 		double old = zCoin;
 		
@@ -281,7 +322,7 @@ public class CoinCache {
 		
 		double times = getDifference(old,zCoin);
 		
-	//	changeZcAmount(times);
+		changeZcAmount(accountMap,times);
 		
 		return zCoin;
 	}
@@ -299,7 +340,7 @@ public class CoinCache {
 		
 		long millis=System.currentTimeMillis();
 		
-		SimpleDateFormat format=new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+		SimpleDateFormat format=new SimpleDateFormat("dd-MMM-yyyy-HH:mm:ss");
 		
 		Date date= new Date(millis);
 		
@@ -380,6 +421,27 @@ public class CoinCache {
 		 return balance;
 	}
 	
+	public boolean withdrawZc(Jedis accountMap,int id, int acc_num, double amount)throws CustomException
+	{
+		double balance = getZcBalance(accountMap,id);
+		
+		 account.ZCoin.Account.Builder account = accountDetails(accountMap,id);
+		 
+		 if(balance < amount)
+			{
+				throw new CustomException("WITHDRAW");
+			}
+			
+			double total = balance-amount;
+			
+			account.setZcAmount(total);
+			
+			accountMap.set(Integer.toString(id), account.toString());
+			
+			return true;
+			
+	}
+	
 	public boolean depositZc(Jedis accountMap,int id,int acc_num, double amount)throws CustomException
 	{
 		double balance = getZcBalance(accountMap,id);
@@ -414,35 +476,100 @@ public class CoinCache {
 	{
 		int id = transfer.getUserId();
 		
-		String value = transferMap.get(Integer.toString(id));
+		String user_id = Integer.toString(id);
 		
-		//list.add(transfer);
+		List<String> value = transferMap.mget(user_id);
 		
-		//transferMap.put(id, list);
+		if(value==null)
+		{
+			value = new ArrayList<>();
+		}
+		
+		value.add(transfer.toString());
+		
+		transferMap.set(user_id, value.toString());
 	}
 	
-	/*public RMap<Integer,RList<transaction.ZCoin.Transaction.Builder>> getAllHistory()throws CustomException
-	{
-		return transferMap;
-	}
 	
-	public RList<transaction.ZCoin.Transaction.Builder> getHistoryByUserId(int id)throws CustomException
+	public  List<transaction.ZCoin.Transaction.Builder> getHistoryByUserId(Jedis transferMap,int id)throws CustomException
 	{
-		RList<transaction.ZCoin.Transaction.Builder> list = transferMap.get(id);
+		List<String> list = transferMap.mget(Integer.toString(id));
 		
-		return list;
-	}*/
+		List<transaction.ZCoin.Transaction.Builder> history = new ArrayList<>();
+		
+		for(int i=0;i<list.size();i++)
+		{
+			String ans = list.get(i);
+			
+			String[] temp = ans.split("\n");
+			
+			int count=0;
+			
+			transaction.ZCoin.Transaction.Builder transfer = transaction.ZCoin.Transaction.newBuilder();
+			
+			for(String each : temp)
+			{
+
+				if(each.contains(":"))
+				{
+		
+					String[] arr = each.split(" ");
+					
+					for(int j=0;j<arr.length;j++)
+					{
+						if(j%2!=0)
+						{
+		
+							count++;
+													
+							if(count==1)
+							{
+								transfer.setUserId(Integer.valueOf(arr[j]));
+							}
+							else if(count==2)
+							{
+								transfer.setFromAccount(Integer.valueOf(arr[j]));
+							}
+							else if(count==3)
+							{
+								transfer.setToAccount(Integer.valueOf(arr[j]));
+							}
+							else if(count==4)
+							{
+								String type = removeQuotes(arr[j]);
+								
+								transfer.setType(type);
+							}
+							else if(count==5)
+							{
+								transfer.setAmount(Double.valueOf(arr[j]));
+							}
+							else if(count==6)
+							{
+								String date = removeQuotes(arr[j]);
+
+								transfer.setDate(date);
+								
+							}
+						}
+						
+						
+					}
+				}
+			}
+			
+			history.add(transfer);
+		}
+	
+		
+		return history;
+	}
 	
 	public boolean checkMailExists(Jedis mailMap,String mail)throws CustomException
 	{
-		String result = mailMap.get(mail);
+		boolean result = mailMap.exists(mail);
 		
-		if(result==null || result.isEmpty())
-		{
-			return false;
-		}
-		
-		return true;
+		return result;
 	}
 	
 	public boolean updateName(Jedis userMap,String name,int id)throws CustomException
@@ -454,6 +581,61 @@ public class CoinCache {
 		userMap.set(Integer.toString(id), user.toString());
 		
 		return true;
+	}
+	
+	public int getIdByAccountNum(Jedis accountMap,int acc_num)throws CustomException
+	{
+		int user = 0;
+		
+		for(String key : accountMap.keys("*"))
+		{
+			int id = Integer.valueOf(key);
+			
+			account.ZCoin.Account.Builder account = accountDetails(accountMap,id);
+			
+			int accountNumber = account.getAccountNum();
+			
+			if(accountNumber == acc_num)
+			{
+				user = account.getUserId();
+			}
+		}
+		
+		return user;
+	}
+		
+	public boolean transferZCoin(Jedis accountMap,int from_id, int to_id,int from_account, int to_account, double amount)throws CustomException
+	{
+		boolean withdraw = withdrawZc(accountMap,from_id,from_account,amount);
+		
+		boolean deposit = depositZc(accountMap,to_id,to_account,amount);
+		
+		if(withdraw && deposit)
+		{
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public Map<Integer,List<transaction.ZCoin.Transaction.Builder>> getAllHistory(Jedis transferMap) throws CustomException 
+	{
+		
+		Map<Integer,List<transaction.ZCoin.Transaction.Builder>> transactionMap = new HashMap<>();
+		
+		
+		for(String key : transferMap.keys("*"))
+		{
+			
+			List<transaction.ZCoin.Transaction.Builder> transfer = 
+					getHistoryByUserId(transferMap,Integer.valueOf(key));
+			
+			transactionMap.put(Integer.valueOf(key), transfer);
+			
+		}
+		
+		return transactionMap;
+		
 	}
 	
 	
